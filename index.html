@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Julian Barrera - Data Scientist & Developer</title>
+    
+    <!-- Three.js for Rubik cube -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            --primary-black: #000000;
+            --secondary-gray: #333333;
+            --accent-yellow: #ffd700;
+            --dark-blue-1: #0d1b2a;
+            --dark-blue-2: #1b263b;
+            --dark-blue-3: #15293a;
+            --dark-blue-4: #000814;
+            --light-gray: #f9f9f9;
+        }
+        
+        /* ===== GLOBAL STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background: var(--dark-blue-4);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        section {
+            padding: 5rem 0;
+        }
+        
+        /* ===== NAVIGATION ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            background: #000;
+            z-index: 1000;
+            padding: 1.4rem 0;
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px;
+            margin: 0 auto;
+        }
+
+        /* Logo: J. Barrera | Data Science */
+        .logo {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+        .logo-name { color: rgba(255,255,255,0.9); font-weight: 400; }
+        .logo-sep  { margin: 0 0.65rem; color: rgba(255,255,255,0.2); font-weight: 200; font-size: 0.9rem; }
+        .logo-role { color: rgba(255,255,255,0.45); font-weight: 300; }
+
+        /* Lang switcher */
+        .lang-switcher {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.35);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 4px 10px;
+            transition: color 0.25s;
+        }
+        .lang-btn:hover { color: rgba(255,255,255,0.75); }
+        .lang-btn.active { color: rgba(255,255,255,0.9); font-weight: 500; }
+        .lang-divider {
+            width: 1px;
+            height: 10px;
+            background: rgba(255,255,255,0.18);
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Three nav buttons above cube */
+        /* Centered in the gap between nav bottom (~70px) and cube top */
+        .hero-nav {
+            position: absolute;
+            /* nav is ~70px tall; cube top is at 50vh - 38% of cube size */
+            /* We place hero-nav in that band and use flex to center within it */
+            top: 90px;
+            bottom: calc(50vh + min(480px, 80vw) * 0.38 - 20px);
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            pointer-events: none;
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 2px;
+            pointer-events: all;
+        }
+
+        .hero-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.55);
+            font-family: 'Inter', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 300;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 6px 28px 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: color 0.3s;
+            display: inline-block;
+            position: relative;
+        }
+        .hero-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 1px;
+            background: rgba(255,255,255,0.85);
+            transition: width 0.3s ease;
+        }
+        .hero-btn:hover,
+        .hero-btn:focus {
+            color: rgba(255,255,255,0.95);
+            outline: none;
+        }
+        .hero-btn:hover::after,
+        .hero-btn:focus::after {
+            width: calc(100% - 56px);
+        }
+
+        /* Rubik canvas wrapper — centered, shifted below vertical center */
+        .rubik-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, calc(-38% - 15px));
+            width: min(600px, 90vw);
+            height: min(600px, 90vw);
+            z-index: 5;
+            opacity: 0.87;
+        }
+        #rubikCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Scroll indicator */
+        .scroll-hint {
+            position: absolute;
+            bottom: 2.4rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            z-index: 10;
+            animation: hintBob 2.2s ease-in-out infinite;
+            cursor: pointer;
+        }
+        .scroll-hint span {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.6rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.25);
+        }
+        .scroll-arrow {
+            width: 16px;
+            height: 16px;
+            border-right: 1px solid rgba(255,255,255,0.3);
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            transform: rotate(45deg);
+            animation: arrowPulse 2.2s ease-in-out infinite;
+        }
+        .scroll-arrow:nth-child(3) { margin-top: -10px; animation-delay: 0.25s; opacity: 0.55; }
+        @keyframes hintBob {
+            0%,100% { transform: translateX(-50%) translateY(0); }
+            50%      { transform: translateX(-50%) translateY(6px); }
+        }
+        @keyframes arrowPulse {
+            0%,100% { opacity: 0.3; }
+            50%      { opacity: 0.9; }
+        }
+
+        /* Hide old hero elements */
+        #neuralCanvas, .neural-overlay,
+        .hero-content, .typewriter-container,
+        .cursor, .hero-description, .cta-buttons,
+        .hamburger, .mobile-menu { display: none !important; }
+
+        /* keep body bg black */
+        body { background: #000; }
+
+        /* ─── placeholder so old CSS below still compiles ─── */
+        .typewriter-text {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 400;
+            letter-spacing: 3px;
+            display: inline-block;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 3.5rem;
+            background: white;
+            margin-left: 5px;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        .hero-description {
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .cta-btn {
+            padding: 1rem 2.5rem;
+            text-decoration: none;
+            border-radius: 0;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-width: 200px;
+            text-align: center;
+        }
+        
+        .cta-btn.primary {
+            background: white;
+            color: var(--primary-black);
+        }
+        
+        .cta-btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3);
+        }
+        
+        .cta-btn.secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .cta-btn.secondary:hover {
+            background: white;
+            color: var(--primary-black);
+            transform: translateY(-3px);
+        }
+
+        /* Sections */
+        section {
+            padding: 5rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            position: relative;
+            color: white;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+        
+        .projects .section-title {
+            margin-bottom: 1.5rem;
+            flex-shrink: 0;
+        }
+        .projects {
+            padding: 2rem 0;
+            height: 95vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .projects .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: 1fr 0.65fr;
+            gap: 0.75rem;
+            flex: 1;
+            min-height: 0;
+        }
+        
+        .project-card {
+            position: relative;
+            border-radius: 0;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease, order 0s;
+            background: #f0f0f0;
+            grid-column: span 2;
+            border: 1px solid #6D6D6D;
+        }
+
+        .project-card.card-large {
+            grid-column: span 3;
+        }
+
+        .project-card.card-small {
+            grid-column: span 2;
+        }
+        
+        .project-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .project-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.96) 100%);
+            opacity: 1;
+            transition: background 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2rem;
+            color: white;
+        }
+        
+        .project-card:hover .project-overlay {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.88) 50%, rgba(0,0,0,0.98) 100%);
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 0.4rem;
+        }
+        .tech-tag {
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            opacity: 0.92;
+        }
+        .tech-tag:nth-child(6n+1) { color: #61dafb; }
+        .tech-tag:nth-child(6n+2) { color: #ffd700; }
+        .tech-tag:nth-child(6n+3) { color: #c678dd; }
+        .tech-tag:nth-child(6n+4) { color: #98c379; }
+        .tech-tag:nth-child(6n+5) { color: #e5c07b; }
+        .tech-tag:nth-child(6n+6) { color: #e06c75; }
+        
+        .project-card:hover img {
+            transform: scale(1.05);
+        }
+        
+        .project-card:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+        }
+        
+        .project-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            transform: translateY(0);
+            color: #fff;
+        }
+        
+        .project-tools {
+            font-size: 0.9rem;
+            opacity: 0.85;
+            margin-bottom: 0.3rem;
+            transform: translateY(0);
+            color: #fff;
+        }
+        
+        .project-year {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            transform: translateY(0);
+            color: #fff;
+        }
+        
+        .project-card.hidden {
+            display: none;
+        }
+        
+        /* ===== ABOUT SECTION ===== */
+        .about {
+            background: transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .floating-circle {
+            display: none;
+        }
+        
+        .about .container {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto 4rem;
+            text-align: center;
+        }
+        
+        .about-content p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            color: rgba(255, 255, 255, 0.75);
+        }
+        
+        .services-grid {
+            display: none;
+        }
+
+        .skills-image-wrap {
+            display: flex;
+            justify-content: center;
+            margin-top: 4rem;
+        }
+
+        .skills-image-wrap img {
+            height: 27.5vh;
+            width: auto;
+            max-width: 110%;
+            object-fit: contain;
+            display: block;
+        }
+        
+        .service-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .service-box:nth-child(even) {
+            transform: translateY(20px);
+        }
+        
+        .service-box:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+        
+        .service-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-yellow);
+            transition: color 0.3s ease;
+        }
+        
+        .service-box:hover .service-icon {
+            color: var(--accent-yellow);
+        }
+        
+        .service-label {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        /* ===== CONTACT SECTION ===== */
+        .contact {
+            background: transparent;
+            color: white;
+            text-align: center;
+        }
+        
+        .contact .section-title {
+            color: white;
+        }
+        
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: transparent;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .social-icon:hover {
+            background: white;
+            color: var(--primary-black);
+            transform: translateY(-3px);
+        }
+        
+        /* ===== FOOTER ===== */
+        footer {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.4);
+            text-align: center;
+            padding: 2rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        /* ===== FADE IN ANIMATION ===== */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* ===== RESPONSIVE DESIGN ===== */
+        
+        /* Tablet */
+        @media (max-width: 768px) {
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero-btn {
+                font-size: 0.9rem;
+                padding: 6px 14px 8px;
+            }
+
+            .projects {
+                height: auto;
+            }
+
+            .projects-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: none;
+            }
+
+            .project-card,
+            .project-card.card-large,
+            .project-card.card-small {
+                grid-column: span 1;
+                min-height: 220px;
+            }
+            
+            .category-filters {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                max-width: 90%;
+                margin: 0 auto;
+            }
+            
+            .category-btn {
+                width: 100%;
+            }
+        }
+        
+        /* Mobile */
+        @media (max-width: 480px) {
+            section {
+                padding: 3rem 0;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+
+            /* Nav más pequeño */
+            .logo {
+                font-size: 0.6rem;
+                letter-spacing: 0.5px;
+            }
+            .lang-btn {
+                font-size: 0.6rem;
+                padding: 4px 7px;
+            }
+
+            /* Cubo más grande en móvil */
+            .rubik-wrapper {
+                width: 95vw;
+                height: 95vw;
+            }
+
+            /* Botones de sección un poco más grandes */
+            .hero-btn {
+                font-size: 0.95rem;
+                padding: 5px 12px 6px;
+                letter-spacing: 1px;
+            }
+
+            .hero-buttons {
+                gap: 0;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .projects {
+                height: auto;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: none;
+            }
+            
+            .project-card,
+            .project-card.card-large,
+            .project-card.card-small {
+                grid-column: span 1;
+                min-height: 200px;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .service-box:nth-child(even) {
+                transform: translateY(0);
+            }
+            
+            .about-content p {
+                font-size: 1rem;
+            }
+            
+            .social-icons {
+                flex-wrap: wrap;
+                gap: 1.5rem;
+            }
+        }
+
+        /* ===== PROJECT MODAL ===== */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 2rem;
+        }
+
+        .modal-backdrop.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal {
+            background: #0d1b2a;
+            border: 1px solid #6D6D6D;
+            width: 100%;
+            max-width: 860px;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            transform: translateY(24px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-backdrop.open .modal {
+            transform: translateY(0);
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 100%;
+            min-height: 320px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .modal-body {
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            line-height: 1.3;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.5);
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+            flex-shrink: 0;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: white;
+        }
+
+        .modal-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .modal-tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--accent-yellow);
+        }
+
+        .modal-tools {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .modal-year {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.35);
+        }
+
+        .modal-description {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.75);
+            line-height: 1.7;
+            flex-grow: 1;
+        }
+
+        .modal-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.6rem;
+            background: white;
+            color: #000;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: background 0.2s, color 0.2s;
+            align-self: flex-start;
+        }
+
+        .modal-link:hover {
+            background: var(--accent-yellow);
+        }
+
+        .modal-link.disabled {
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.3);
+            cursor: default;
+            pointer-events: none;
+        }
+
+        @media (max-width: 640px) {
+            .modal {
+                grid-template-columns: 1fr;
+            }
+            .modal-image {
+                min-height: 200px;
+                max-height: 220px;
+            }
+            .modal-body {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVIGATION -->
+    <nav id="navbar">
+        <div class="container">
+            <a href="#home" class="logo">
+                <span class="logo-name">J. Barrera</span>
+                <span class="logo-sep">|</span>
+                <span class="logo-role">Data Science</span>
+            </a>
+            <div class="lang-switcher">
+                <button class="lang-btn active" id="langEng" onclick="setLang('eng')">ENG</button>
+                <div class="lang-divider"></div>
+                <button class="lang-btn" id="langSpa" onclick="setLang('spa')">SPA</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+
+        <!-- Three nav buttons above cube -->
+        <div class="hero-nav">
+            <div class="hero-buttons">
+                <a href="#about"    class="hero-btn" data-eng="Who Am I?"  data-spa="Quién Soy">Who Am I?</a>
+                <a href="#projects" class="hero-btn" data-eng="Projects"  data-spa="Proyectos">Projects</a>
+                <a href="#contact"  class="hero-btn" data-eng="Contact"   data-spa="Contacto">Contact</a>
+            </div>
+        </div>
+
+        <!-- Rubik cube canvas -->
+        <div class="rubik-wrapper">
+            <canvas id="rubikCanvas"></canvas>
+        </div>
+
+        <!-- Scroll indicator -->
+        <div class="scroll-hint" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">
+            <span data-eng="scroll" data-spa="bajar">scroll</span>
+            <div class="scroll-arrow"></div>
+            <div class="scroll-arrow"></div>
+        </div>
+
+    </section>
+    
+    <!-- ABOUT SECTION -->
+    <section class="about" id="about">
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        
+        <div class="container">
+            <h2 class="section-title fade-in">Bridging data, strategy, technology
+                <br>
+                &amp; <span class="tagline-accent">purpose.</span></h2>
+            
+            <div class="about-content fade-in">
+                <p>IT enthusiast, Data scientist and developer turning complex datasets into strategic insights.
+                
+Passionate about geopolitics, society, sports, art, and the ability Data Science has to inspect and cross-cut these and other fields transversally.
+
+I thrive on solving challenging problems and building scalable solutions that make a real impact.</p>
+            </div>
+            
+            <div class="skills-image-wrap fade-in">
+                <img src=".img/test2.png" alt="Skills">
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECTS SECTION -->
+    <section class="projects" id="projects">
+        <div class="container">
+            <h2 class="section-title fade-in">Featured Projects.</h2>
+
+            <div class="projects-grid">
+                <!-- ROW 1: 2 grandes -->
+                <div class="project-card card-large fade-in" data-id="pipewipe">
+                    <img src="./img/pipewipe.png" alt="PipeWipe">
+                    <div class="project-overlay">
+                        <h3 class="project-title">PipeWipe - Metadata Handling</h3>
+                        <div class="tech-tags">
+                            <span class="tech-tag">#Node.js</span>
+                            <span class="tech-tag">#React</span>
+                            <span class="tech-tag">#NLP</span>
+                        </div>
+                        <p class="project-year">2024</p>
+                    </div>
+                </div>
+
+                <div class="project-card card-large fade-in" data-id="capolavoro">
+                    <img src="./img/capolavoro.png" alt="Capolavoro">
+                    <div class="project-overlay">
+                        <h3 class="project-title">Capolavoro - Job Search Tool</h3>
+                        <div class="tech-tags">
+                            <span class="tech-tag">#Python</span>
+                            <span class="tech-tag">#HTML</span>
+                            <span class="tech-tag">#CSS</span>
+                            <span class="tech-tag">#JS</span>
+                        </div>
+                        <p class="project-year">2024</p>
+                    </div>
+                </div>
+
+                <!-- ROW 2: 3 pequeños -->
+                <div class="project-card card-small fade-in" data-id="bosman">
+                    <img src="./img/sentencia-bosman.png" alt="Sentencia Bosman">
+                    <div class="project-overlay">
+                        <h3 class="project-title">Sentencia Bosman</h3>
+                        <div class="tech-tags">
+                            <span class="tech-tag">#Python</span>
+                            <span class="tech-tag">#Power BI</span>
+                        </div>
+                        <p class="project-year">2024</p>
+                    </div>
+                </div>
+
+                <div class="project-card card-small fade-in" data-id="psico">
+                    <img src="./img/psico.png" alt="Sesiones Pendientes">
+                    <div class="project-overlay">
+                        <h3 class="project-title">Sesiones Pendientes: Atención Psicológica en España</h3>
+                        <div class="tech-tags">
+                            <span class="tech-tag">#Python</span>
+                            <span class="tech-tag">#Power BI</span>
+                            <span class="tech-tag">#DAX</span>
+                        </div>
+                        <p class="project-year">2024</p>
+                    </div>
+                </div>
+
+                <div class="project-card card-small fade-in" data-id="co2">
+                    <img src="./img/co2emissions.png" alt="Global CO2 Emissions">
+                    <div class="project-overlay">
+                        <h3 class="project-title">Global CO2 Emissions</h3>
+                        <div class="tech-tags">
+                            <span class="tech-tag">#Python</span>
+                            <span class="tech-tag">#Tableau</span>
+                        </div>
+                        <p class="project-year">2024</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CONTACT SECTION -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <h2 class="section-title fade-in">Get In Touch</h2>
+            
+            <div class="social-icons fade-in">
+                <a href="/cdn-cgi/l/email-protection#80eaf5ece9e1eec0e5f8e1edf0ece5aee3efed" class="social-icon" aria-label="Email">
+                    <i class="fas fa-envelope"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/julián-barrera-b99ab6192" target="_blank" rel="noopener" class="social-icon" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://github.com/barrierj93?tab=repositories" target="_blank" rel="noopener" class="social-icon" aria-label="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- PROJECT MODAL -->
+    <div class="modal-backdrop" id="projectModal">
+        <div class="modal" id="modalInner">
+            <img class="modal-image" id="modalImage" src="" alt="">
+            <div class="modal-body">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modalTitle"></h2>
+                    <button class="modal-close" id="modalClose">&times;</button>
+                </div>
+                <div class="modal-meta">
+                    <span class="modal-tag" id="modalCategory"></span>
+                    <span class="modal-tools" id="modalTools"></span>
+                    <span class="modal-year" id="modalYear"></span>
+                </div>
+                <p class="modal-description" id="modalDescription"></p>
+                <a class="modal-link" id="modalLink" href="#" target="_blank" rel="noopener">
+                    <i class="fas fa-external-link-alt"></i> View Project
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 JULIAN BARRERA.</p>
+        </div>
+    </footer>
+    
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // ===== NAVIGATION SCROLL EFFECT =====
+        const navbar = document.getElementById('navbar');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        // ===== LANG SWITCHER =====
+        function setLang(lang) {
+            document.getElementById('langEng').classList.toggle('active', lang === 'eng');
+            document.getElementById('langSpa').classList.toggle('active', lang === 'spa');
+            document.querySelectorAll('[data-eng]').forEach(el => {
+                el.textContent = lang === 'spa' ? el.dataset.spa : el.dataset.eng;
+            });
+        }
+
+        // ===== RUBIK CUBE (dot-matrix, human animation) =====
+        (function(){
+        const canvas = document.getElementById('rubikCanvas');
+        const W = canvas.parentElement.offsetWidth  || 480;
+        const H = canvas.parentElement.offsetHeight || 480;
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        renderer.setSize(W, H); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setClearColor(0x000000, 0);
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, W/H, 0.1, 100);
+        camera.position.set(0, 0, 11); camera.lookAt(0, 0, 0);
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+        const dl = new THREE.DirectionalLight(0xffffff, 0.9); dl.position.set(6,10,6); scene.add(dl);
+        const dl2 = new THREE.DirectionalLight(0xffffff, 0.25); dl2.position.set(-4,-2,-4); scene.add(dl2);
+
+        function makePixelTex(hex) {
+            const S=128, c=document.createElement('canvas'); c.width=S; c.height=S;
+            const ctx=c.getContext('2d'), base=new THREE.Color(hex);
+            ctx.fillStyle='rgb('+Math.round(base.r*22)+','+Math.round(base.g*22)+','+Math.round(base.b*22)+')';
+            ctx.fillRect(0,0,S,S);
+            const edgeCol=new THREE.Color(0xe0aa18);
+            for(let g=14;g>=0;g--){const a=0.12*(1-g/15);ctx.strokeStyle='rgba('+Math.round(edgeCol.r*255)+','+Math.round(edgeCol.g*255)+','+Math.round(edgeCol.b*255)+','+a+')';ctx.lineWidth=g*2.2;ctx.strokeRect(0,0,S,S);}
+            ctx.strokeStyle='rgb('+Math.round(edgeCol.r*255)+','+Math.round(edgeCol.g*255)+','+Math.round(edgeCol.b*255)+')';ctx.lineWidth=2.5;ctx.strokeRect(1.5,1.5,S-3,S-3);
+            ctx.strokeStyle='rgba('+Math.round(edgeCol.r*255)+','+Math.round(edgeCol.g*255)+','+Math.round(edgeCol.b*255)+',0.4)';ctx.lineWidth=1;ctx.strokeRect(5,5,S-10,S-10);
+            const margin=10,spacing=9;
+            ctx.globalAlpha=0.07;ctx.strokeStyle='rgb('+Math.round(base.r*220)+','+Math.round(base.g*220)+','+Math.round(base.b*220)+')';ctx.lineWidth=0.5;
+            for(let y=margin;y<S-margin;y+=spacing){ctx.beginPath();ctx.moveTo(margin,y);ctx.lineTo(S-margin,y);ctx.stroke();}
+            for(let x=margin;x<S-margin;x+=spacing){ctx.beginPath();ctx.moveTo(x,margin);ctx.lineTo(x,S-margin);ctx.stroke();}
+            ctx.globalAlpha=1;
+            const dotSpacing=9,dotRadius=2.4;
+            for(let dy=margin;dy<S-margin;dy+=dotSpacing)for(let dx=margin;dx<S-margin;dx+=dotSpacing){
+                const jx=(Math.random()-.5)*1.0,jy=(Math.random()-.5)*1.0,r=dotRadius*(0.72+Math.random()*0.55);
+                const cx=(dx-S/2)/(S/2),cy=(dy-S/2)/(S/2),distC=Math.sqrt(cx*cx+cy*cy),bright=0.85+(1-distC)*0.45;
+                const dimmed=Math.random()<0.06,alpha=dimmed?0.15:(0.82+Math.random()*0.18);
+                ctx.beginPath();ctx.arc(dx+jx,dy+jy,r,0,Math.PI*2);
+                ctx.fillStyle='rgba('+Math.round(Math.min(255,base.r*255*bright*1.25))+','+Math.round(Math.min(255,base.g*255*bright*1.25))+','+Math.round(Math.min(255,base.b*255*bright*1.25))+','+alpha+')';ctx.fill();
+                if(!dimmed){ctx.beginPath();ctx.arc(dx+jx-r*.28,dy+jy-r*.28,r*.38,0,Math.PI*2);ctx.fillStyle='rgba(255,255,230,0.45)';ctx.fill();}
+            }
+            const t=new THREE.CanvasTexture(c);t.magFilter=THREE.LinearFilter;t.minFilter=THREE.LinearMipmapLinearFilter;t.generateMipmaps=true;return t;
+        }
+        function makeDarkTex(){const S=32,c=document.createElement('canvas');c.width=S;c.height=S;const ctx=c.getContext('2d');ctx.fillStyle='#040404';ctx.fillRect(0,0,S,S);ctx.strokeStyle='rgba(180,130,0,0.25)';ctx.lineWidth=1;ctx.strokeRect(.5,.5,S-1,S-1);return new THREE.CanvasTexture(c);}
+
+        const TEX={R:makePixelTex(0xff4400),L:makePixelTex(0xff6600),U:makePixelTex(0xffcc00),D:makePixelTex(0xffee88),F:makePixelTex(0x1166ee),B:makePixelTex(0x11aa33)};
+        const DARK=makeDarkTex();
+        const GAP=1.05,CS=0.97;
+        const masterGroup=new THREE.Group();scene.add(masterGroup);
+
+        function faceMat(tex,em,ei){return new THREE.MeshLambertMaterial({map:tex,emissive:new THREE.Color(em),emissiveIntensity:ei||0.28});}
+        function darkMat(){return new THREE.MeshLambertMaterial({map:DARK,emissive:new THREE.Color(0x0a0500),emissiveIntensity:0.2});}
+
+        const cubies=[];
+        for(let ix=-1;ix<=1;ix++)for(let iy=-1;iy<=1;iy++)for(let iz=-1;iz<=1;iz++){
+            const geo=new THREE.BoxGeometry(CS,CS,CS);
+            const mats=[ix===1?faceMat(TEX.R,0x661100,0.35):darkMat(),ix===-1?faceMat(TEX.L,0x662200,0.35):darkMat(),iy===1?faceMat(TEX.U,0x664400,0.38):darkMat(),iy===-1?faceMat(TEX.D,0x443300,0.28):darkMat(),iz===1?faceMat(TEX.F,0x002266,0.32):darkMat(),iz===-1?faceMat(TEX.B,0x003311,0.32):darkMat()];
+            const mesh=new THREE.Mesh(geo,mats);mesh.position.set(ix*GAP,iy*GAP,iz*GAP);masterGroup.add(mesh);cubies.push({mesh,ix,iy,iz});
+        }
+
+        const H2=Math.PI/2;
+        const MOVES=[
+            {axis:new THREE.Vector3(0,1,0),layer:1,angle:H2},{axis:new THREE.Vector3(1,0,0),layer:-1,angle:-H2},
+            {axis:new THREE.Vector3(0,0,1),layer:1,angle:H2},{axis:new THREE.Vector3(0,1,0),layer:-1,angle:-H2},
+            {axis:new THREE.Vector3(1,0,0),layer:1,angle:H2},{axis:new THREE.Vector3(0,0,1),layer:-1,angle:-H2},
+            {axis:new THREE.Vector3(0,1,0),layer:1,angle:-H2},{axis:new THREE.Vector3(1,0,0),layer:-1,angle:H2},
+            {axis:new THREE.Vector3(0,1,0),layer:0,angle:H2},{axis:new THREE.Vector3(0,0,1),layer:0,angle:-H2},
+        ];
+
+        function captureState(){return cubies.map(cu=>({pos:cu.mesh.position.clone(),quat:cu.mesh.quaternion.clone(),ix:cu.ix,iy:cu.iy,iz:cu.iz}));}
+        function applyStateInstant(s){cubies.forEach((cu,i)=>{cu.mesh.position.copy(s[i].pos);cu.mesh.quaternion.copy(s[i].quat);cu.ix=s[i].ix;cu.iy=s[i].iy;cu.iz=s[i].iz;});}
+        function applyMoveInstant(mv){
+            const q=new THREE.Quaternion().setFromAxisAngle(mv.axis,mv.angle);
+            cubies.forEach(cu=>{const coord=mv.axis.x?cu.ix:mv.axis.y?cu.iy:cu.iz;if(coord!==mv.layer)return;
+                const np=cu.mesh.position.clone().applyQuaternion(q);cu.ix=Math.round(np.x/GAP);cu.iy=Math.round(np.y/GAP);cu.iz=Math.round(np.z/GAP);
+                cu.mesh.position.set(cu.ix*GAP,cu.iy*GAP,cu.iz*GAP);cu.mesh.quaternion.premultiply(q);cu.mesh.quaternion.normalize();});
+        }
+        const states=[];states.push(captureState());
+        for(let m=0;m<MOVES.length;m++){applyMoveInstant(MOVES[m]);states.push(captureState());}
+        applyStateInstant(states[0]);
+
+        function lerpStates(A,B,t){cubies.forEach((cu,i)=>{cu.mesh.position.lerpVectors(A[i].pos,B[i].pos,t);cu.mesh.quaternion.slerpQuaternions(A[i].quat,B[i].quat,t);});}
+
+        let seed=7331;
+        function rng(){seed=(seed*1664525+1013904223)&0xffffffff;return(seed>>>0)/4294967296;}
+        function rr(a,b){return a+(b-a)*rng();}
+        function easeIO(t){return t<0.5?2*t*t:-1+(4-2*t)*t;}
+        function easeOutBack(t){const c1=1.4,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2);}
+        function easeOutCubic(t){return 1-Math.pow(1-t,3);}
+        function shortestYaw(f,t){let d=t-f;while(d>Math.PI)d-=Math.PI*2;while(d<-Math.PI)d+=Math.PI*2;return d;}
+
+        const GAZE_ANGLES=[
+            {yaw:0.62,pitch:0.40},{yaw:-0.62,pitch:0.40},{yaw:0.62,pitch:-0.20},{yaw:-0.62,pitch:-0.20},
+            {yaw:1.05,pitch:0.35},{yaw:-1.05,pitch:0.35},{yaw:0.45,pitch:0.62},{yaw:-0.45,pitch:0.62},
+            {yaw:2.50,pitch:0.38},{yaw:-2.50,pitch:0.38},
+        ];
+        function buildGazeScript(fwd){seed=fwd?7331:9173;const sc=[];let mIdx=0,prev=-1;
+            while(mIdx<MOVES.length){let gi;do{gi=Math.floor(rng()*GAZE_ANGLES.length);}while(gi===prev);prev=gi;
+                const movesHere=Math.min(Math.floor(rr(1,3.99)),MOVES.length-mIdx);
+                sc.push({angle:GAZE_ANGLES[gi],panDur:rr(0.7,1.4),holdDur:rr(0.5,1.1)+movesHere*rr(0.5,0.85),movesThisHold:Array.from({length:movesHere},(_,k)=>mIdx+k)});
+                mIdx+=movesHere;}return sc;}
+        const scriptFwd=buildGazeScript(true),scriptBwd=buildGazeScript(false);
+
+        let camYaw=0.62,camPitch=0.40;
+        function applyCam(){
+            const qY=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),camYaw);
+            const qX=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),camPitch);
+            masterGroup.quaternion.copy(qX).premultiply(qY);
+        }
+        applyCam();
+
+        const MOVE_EASINGS=[easeIO,easeOutBack,easeIO,easeOutBack,easeIO];
+        let topPhase='INTRO_HOLD',direction='fwd',script=scriptFwd,scriptIdx=0;
+        let panTimer=0,panFromYaw=camYaw,panFromPitch=camPitch,panToYaw=0,panToPitch=0,panDur=1;
+        let holdTimer=0,holdDur=2,holdMoves=[],holdMovesDone=0;
+        let moveActive=false,moveSubIdx=0,moveT=0,moveStateA=0,moveStateB=0,moveDur=0.45;
+        let interMoveGap=0,interMoveTimer=0,inInterMoveGap=false;
+        let curStateIdx=0,introTimer=0,wobbleT=0;
+        const INTRO_HOLD_DUR=2.4,END_HOLD_DUR=1.8;
+
+        function startPan(e){panFromYaw=camYaw;panFromPitch=camPitch;panToYaw=e.angle.yaw;panToPitch=e.angle.pitch;panDur=e.panDur;panTimer=0;topPhase='PAN';}
+        function startHold(e){holdDur=e.holdDur;holdMoves=e.movesThisHold.slice();holdTimer=0;holdMovesDone=0;moveActive=false;inInterMoveGap=false;moveSubIdx=0;wobbleT=0;topPhase='HOLD';interMoveGap=rr(0.25,0.65);interMoveTimer=0;inInterMoveGap=true;}
+        function triggerNextMove(){if(moveSubIdx>=holdMoves.length){moveActive=false;return;}moveDur=rr(0.28,0.62);if(rng()<0.2)moveDur*=0.5;moveStateA=curStateIdx;moveStateB=direction==='fwd'?curStateIdx+1:curStateIdx-1;moveT=0;moveActive=true;}
+
+        const clock=new THREE.Clock();
+        function animateRubik(){
+            requestAnimationFrame(animateRubik);
+            const dt=Math.min(clock.getDelta(),0.05);
+            if(topPhase==='HOLD'){wobbleT+=dt;const wx=Math.sin(wobbleT*1.3)*.008+Math.sin(wobbleT*2.1)*.004,wy=Math.sin(wobbleT*.9)*.006+Math.cos(wobbleT*1.7)*.003;const qY=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),camYaw+wy),qX=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),camPitch+wx);masterGroup.quaternion.copy(qX).premultiply(qY);}
+            if(topPhase==='INTRO_HOLD'){introTimer+=dt;applyStateInstant(states[curStateIdx]);if(introTimer>=INTRO_HOLD_DUR){introTimer=0;if(scriptIdx<script.length)startPan(script[scriptIdx]);else topPhase='END_HOLD';}}
+            else if(topPhase==='PAN'){panTimer+=dt;const rawT=Math.min(1,panTimer/panDur),e=easeOutCubic(rawT),dy=shortestYaw(panFromYaw,panToYaw);camYaw=panFromYaw+dy*e;camPitch=panFromPitch+(panToPitch-panFromPitch)*e;applyCam();if(rawT>=1){camYaw=panToYaw;camPitch=panToPitch;applyCam();startHold(script[scriptIdx]);}}
+            else if(topPhase==='HOLD'){holdTimer+=dt;if(inInterMoveGap&&!moveActive){interMoveTimer+=dt;if(interMoveTimer>=interMoveGap){inInterMoveGap=false;triggerNextMove();}}
+                if(moveActive){moveT+=dt/moveDur;if(moveT>=1){applyStateInstant(states[moveStateB]);curStateIdx=moveStateB;moveActive=false;moveSubIdx++;holdMovesDone++;if(moveSubIdx<holdMoves.length){interMoveGap=rr(0.18,0.52);interMoveTimer=0;inInterMoveGap=true;}}else{lerpStates(states[moveStateA],states[moveStateB],MOVE_EASINGS[moveSubIdx%MOVE_EASINGS.length](moveT));}}
+                const allDone=moveSubIdx>=holdMoves.length&&!moveActive&&!inInterMoveGap;if(holdTimer>=holdDur&&allDone){scriptIdx++;if(scriptIdx<script.length)startPan(script[scriptIdx]);else{topPhase='END_HOLD';introTimer=0;}}}
+            else if(topPhase==='END_HOLD'){introTimer+=dt;applyStateInstant(states[curStateIdx]);if(introTimer>=END_HOLD_DUR){if(direction==='fwd'){direction='bwd';script=scriptBwd;}else{direction='fwd';script=scriptFwd;curStateIdx=0;applyStateInstant(states[0]);}scriptIdx=0;introTimer=0;topPhase='INTRO_HOLD';}}
+            renderer.render(scene,camera);
+        }
+        animateRubik();
+        })();
+
+        
+        // ===== FADE IN ON SCROLL =====
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.fade-in').forEach(element => {
+            observer.observe(element);
+        });
+        
+        // ===== SMOOTH SCROLLING =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        // ===== PROJECT MODAL =====
+        const projectData = {
+            pipewipe: {
+                title: 'PipeWipe - Metadata Handling',
+                category: 'Dev',
+                tools: 'Node.js, React, NLP',
+                year: '2024',
+                image: './img/pipewipe.png',
+                description: 'PipeWipe is a privacy-focused web application that extracts and removes metadata from files. Built with a Next.js frontend and an Express.js backend powered by ExifTool and FFmpeg, it allows users to inspect hidden metadata across images, documents, videos and audio files, and surgically wipe it — preserving file integrity while protecting privacy.',
+                link: 'https://github.com/barrierj93/PipeWipe_Web/blob/main/README.md'
+            },
+            capolavoro: {
+                title: 'Capolavoro - Job Search Tool',
+                category: 'Dev',
+                tools: 'Python, HTML, CSS, JS',
+                year: '2024',
+                image: './img/capolavoro.png',
+                description: 'Capolavoro is a job search aggregation tool built for the Irish market. It scrapes and consolidates job listings from multiple platforms into a single clean interface, allowing users to filter by role, location and salary range — reducing the friction of a fragmented job search landscape.',
+                link: 'https://barrierj93.github.io/CapoLavoro-search-tool/'
+            },
+            bosman: {
+                title: 'Sentencia Bosman',
+                category: 'Data Science',
+                tools: 'Python, Power BI',
+                year: '2024',
+                image: './img/sentencia-bosman.png',
+                description: 'An analytical deep-dive into the long-term impact of the 1995 Bosman ruling on professional football. The project tracks how freedom of movement transformed player transfer markets, squad nationality composition, and wage structures across Europe\'s top leagues — using historical data spanning three decades.',
+                link: 'https://barrierj93.github.io/EDA_Bosman_Ruling/'
+            },
+            anon: {
+                title: 'Threat Intel: Anonymous Activity',
+                category: 'Data Science',
+                tools: 'Python, Power BI',
+                year: '2024',
+                image: './img/anon.png',
+                description: 'A threat intelligence analysis tracking the cyberattack campaigns of the hacktivist collective Anonymous. The project maps attack vectors, targeted sectors and geographic patterns across a multi-year dataset, producing an interactive Power BI dashboard for security analysts and researchers.',
+                link: 'https://barrierj93.github.io/DataAnalysis_Anonymous_Attack_Series/'
+            },
+            corp: {
+                title: 'Corporate Dashboard',
+                category: 'Data Science',
+                tools: 'Python, R',
+                year: '2024',
+                image: './img/corp.png',
+                description: 'A financial performance dashboard built for corporate reporting. It combines Python-driven data pipelines with R-based Sankey and alluvial visualisations to represent revenue flows, cost structures and margin evolution across business units from 2010 to 2024.',
+                link: null
+            },
+            psico: {
+                title: 'Sesiones Pendientes: Atención Psicológica en España',
+                category: 'Data Science',
+                tools: 'Python, Power BI, DAX',
+                year: '2024',
+                image: './img/psico.png',
+                description: 'An exploratory data analysis of the state of mental health care access in Spain. The project examines waiting times, coverage gaps and regional disparities in public psychological services — combining open government data with web-scraped sources to surface a largely invisible public health issue.',
+                link: 'https://github.com/barrierj93/EDA_Sesiones-Pendientes_Salud-mental-Espana/blob/main/README.md'
+            },
+            co2: {
+                title: 'Global CO2 Emissions',
+                category: 'Data Science',
+                tools: 'Python, Tableau',
+                year: '2024',
+                image: './img/co2emissions.png',
+                description: 'An interactive Tableau dashboard tracking global CO2 emissions across countries, sectors and time. Built on publicly available climate datasets processed with Python, it allows users to explore emission trends, per-capita comparisons and sectoral breakdowns — making complex climate data accessible and actionable.',
+                link: 'https://public.tableau.com/app/profile/juli.n.barrera.antoniolli/viz/CO2Dashboard_17261787616320/Dash_dark3'
+            }
+        };
+
+        const backdrop = document.getElementById('projectModal');
+        const modalClose = document.getElementById('modalClose');
+        const modalInner = document.getElementById('modalInner');
+
+        // Stop clicks inside modal from closing it via backdrop listener
+        modalInner.addEventListener('click', e => e.stopPropagation());
+
+        function openModal(id) {
+            const p = projectData[id];
+            if (!p) return;
+            document.getElementById('modalTitle').textContent = p.title;
+            document.getElementById('modalCategory').textContent = p.category;
+            document.getElementById('modalTools').textContent = p.tools;
+            document.getElementById('modalYear').textContent = p.year;
+            document.getElementById('modalImage').src = p.image;
+            document.getElementById('modalImage').alt = p.title;
+            document.getElementById('modalDescription').textContent = p.description;
+
+            const link = document.getElementById('modalLink');
+            // Remove all previous listeners by cloning
+            const newLink = link.cloneNode(true);
+            link.parentNode.replaceChild(newLink, link);
+
+            if (p.link) {
+                newLink.classList.remove('disabled');
+                newLink.addEventListener('click', e => {
+                    e.stopPropagation();
+                    window.open(p.link, '_blank', 'noopener');
+                });
+            } else {
+                newLink.classList.add('disabled');
+                newLink.addEventListener('click', e => e.stopPropagation());
+            }
+
+            backdrop.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            backdrop.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // Open on card click
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.addEventListener('click', () => openModal(card.getAttribute('data-id')));
+        });
+
+        // Close on X button
+        modalClose.addEventListener('click', closeModal);
+
+        // Close on backdrop click
+        backdrop.addEventListener('click', e => {
+            if (e.target === backdrop) closeModal();
+        });
+
+        // Close on Escape
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
